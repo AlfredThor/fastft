@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <script src="https://www.tenpay.com/v4/static/js/jquery-1.9.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css"
+          integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
+    <script src="./static/jquery-1.11.1.min.js"></script>
+    <script src="./static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./static/webuploader/webuploader.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./static/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="./static/bootstrap/css/bootstrap.min.css">
+</head>
+
+<body>
+<nav class="navbar navbar-default">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <img alt="Brand" width="25" height="25" src="/static/img/img.png">
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/">主页</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">水哥的小电影存储基地</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container" style="margin-top:5px;">
+
+    <div class="container" style="border: 1px solid pink;;">
+        <!--        <div class="container" style="margin-top: 5px;">-->
+        <!--            <span class="label label-success" style="font-size: 1.1em;">文件上传</span>-->
+        <!--        </div>-->
+        <div class="container" style="margin-top: 5px;">
+            <div id="picker" style="">请选择文件</div>
+            <div id="progress" class="progress" style="width:500px;float:left;margin:10px 0 0 20px;">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" style="width:0%;"></div>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+
+
+    <div class="page-header">
+        <h1>文件列表 <small>This is Files Lists</small></h1>
+    </div>
+
+    <table class="table table-bordered" style="text-align: center;">
+        <thead>
+        <tr>
+            <th style="text-align: center;">ID</th>
+            <th style="text-align: center;">文件名</th>
+            <th style="text-align: center;">点击下载</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in files %}
+
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ file }}</td>
+            <td>
+                <button class="btn btn-success btn-sm" onclick="downloadFile('{{ file }}')">点击进行下载</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+    <!--    {% for file in files %}-->
+    <!--    <div class="alert alert-info" role="alert" style="margin-top: 5px;">-->
+    <!--        <a href="/download/?filename={{ file }}" class="alert-link">点击下载: {{ file }}</a>-->
+    <!--    </div>-->
+    <!--    {% endfor %}-->
+
+    <div class="pagination">
+        <ul class="pagination">
+            {% if current_page > 1 %}
+            <li><a href="?page={{ current_page - 1 }}">上一页</a></li>
+            {% endif %}
+
+            {% for p in range(1, total_pages + 1) %}
+            <li class="{% if p == current_page %}active{% endif %}">
+                <a href="?page={{ p }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+
+            {% if current_page < total_pages %}
+            <li><a href="?page={{ current_page + 1 }}">下一页</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    function downloadFile(filename) {
+        window.location.href = '/download?filename=' + filename;
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var task_id = WebUploader.Base.guid(); // 产生文件唯一标识符task_id
+        var uploader = WebUploader.create({
+            swf: './static/webuploader/Uploader.swf',
+            server: '/upload', // 上传分片地址
+            pick: '#picker',
+            auto: true,
+            // chunked: true,
+            // chunkSize: 1 * 1024 * 1024,
+            chunkRetry: 3,
+            threads: 1,
+            duplicate: true,
+            formData: { // 上传分片的http请求中一同携带的数据
+                task_id: task_id,
+            },
+        });
+
+        uploader.on('startUpload', function () { // 开始上传时，调用该方法
+            $('#progress').show();
+            $('.progress-bar').css('width', '0%');
+            $('.progress-bar').text('0%');
+            $('.progress-bar').removeClass('progress-bar-danger progress-bar-success');
+            $('.progress-bar').addClass('active progress-bar-striped');
+        });
+
+        uploader.on('uploadProgress', function (file, percentage) { // 一个分片上传成功后，调用该方法
+            $('.progress-bar').css('width', percentage * 100 - 1 + '%');
+            $('.progress-bar').text(Math.floor(percentage * 100 - 1) + '%');
+        });
+
+        uploader.on('uploadSuccess', function (file) { // 整个文件的所有分片都上传成功后，调用该方法
+            var data = {'task_id': task_id, 'filename': file.source['name']};
+            $.get('/success', data);
+            $('.progress-bar').css('width', '100%');
+            $('.progress-bar').text('100%');
+            $('.progress-bar').addClass('progress-bar-success');
+            $('.progress-bar').text('上传完成');
+
+            // 在上传完成后2秒刷新页面
+            // setTimeout(function() {
+            //     location.reload();  // 刷新页面
+            // }, 1500);
+
+        });
+
+        uploader.on('uploadError', function (file) { // 上传过程中发生异常，调用该方法
+            console.log(file.errors)
+            $('.progress-bar').css('width', '100%');
+            $('.progress-bar').text('100%');
+            $('.progress-bar').addClass('progress-bar-danger');
+            $('.progress-bar').text('上传失败');
+        });
+
+        uploader.on('uploadComplete', function (file) { // 上传结束，无论文件最终是否上传成功，该方法都会被调用
+            $('.progress-bar').removeClass('active progress-bar-striped');
+        });
+
+        $('#progress').hide();
+
+        uploader.on('beforeFileQueued', function (file) {
+            var chunkSize = 1 * 1024 * 1024; // 默认分片大小1MB
+            var smallFileSize = 1 * 1024 * 1024; // 小文件阈值1MB
+
+            if (file.size <= smallFileSize) {
+                // 如果文件小于或等于1MB，不进行分片上传
+                uploader.option('chunked', false);
+                uploader.option('chunkSize', 0); // 设置为0表示不分片
+                uploader.option('formData', {'chunked': 'false'}); // 添加标志
+            } else {
+                // 如果文件大于1MB，根据文件大小动态设置分片大小
+                if (file.size > 100 * 1024 * 1024) { // 如果文件大于100MB
+                    chunkSize = 20 * 1024 * 1024; // 分片大小10MB
+                } else if (file.size > 10 * 1024 * 1024) { // 如果文件大于10MB
+                    chunkSize = 5 * 1024 * 1024; // 分片大小5MB
+                }
+                uploader.option('chunked', true);
+                uploader.option('chunkSize', chunkSize); // 设置分片大小
+                uploader.option('formData', {'chunked': 'true'}); // 添加标志
+            }
+        });
+    });
+</script>
+
+</body>
+
+</html>

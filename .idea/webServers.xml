@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="cf4af149-a03e-42e7-ad71-6dc6d8382b4c" name="Server">
+        <fileTransfer rootFolder="/docker/work/fastft" accessType="SFTP" host="192.168.51.21" port="22" sshConfigId="20d1d4cc-8611-4680-8a98-49859c8b07da" sshConfig="root@192.168.51.21:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
