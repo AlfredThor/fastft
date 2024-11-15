@@ -16,3 +16,34 @@
 https://github.com/lsm1103/pyupload
 
 ---
+
+## 在Docker中部署
+
+> 在项目跟文件目录下操作,确保拥有Python:3.12的镜像
+
+- 构建容器
+
+```shell
+docker build -t fastft .
+```
+
+- 运行容器
+
+```shell
+docker run -itd -p 8000:8000 -p 9001:9001 fastft
+```
+
+- 在容器内启动项目
+
+```shell
+# 启动supervisor
+service supervisor start
+
+# 启动gunicorn
+supervisorctl start gunicorn
+
+# 启动nginx
+nginx
+```
+
+---
