@@ -28,7 +28,7 @@
                 <li><a href="/">主页</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/">海盐苏打饼干</a></li>
+                <li><a href="/">水哥的小电影存储基地</a></li>
             </ul>
         </div>
     </div>
@@ -67,7 +67,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <div class="pagination">
+    <nav aria-label="Page navigation navbar-fixed-bottom">
         <ul class="pagination">
             {% if current_page > 1 %}
             <li><a href="?page={{ current_page - 1 }}">上一页</a></li>
@@ -81,7 +81,7 @@
             <li><a href="?page={{ current_page + 1 }}">下一页</a></li>
             {% endif %}
         </ul>
-    </div>
+    </nav>
 </div>
 
 <script type="text/javascript">
