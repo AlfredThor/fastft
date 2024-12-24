@@ -37,13 +37,13 @@ docker run -itd -p 8080:8080 -p 9001:9001 --name fastft-container fastft
 
 ```shell
 # 進入容器
-docker exec -it fastft /bin/bash
+docker exec -it fastft-container /bin/bash
 
 # 启动supervisor
 service supervisor start
 
-# 启动gunicorn
-supervisorctl start gunicorn
+# 查看gunicorn是否启动,一般会随着supervisor自行启动
+supervisorctl status gunicorn
 
 # 启动nginx
 nginx

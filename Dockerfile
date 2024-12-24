@@ -19,6 +19,8 @@ WORKDIR /fastft
 
 COPY . /fastft
 
+RUN mkdir /upload
+
 RUN /usr/local/bin/python -m pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/
 RUN pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 
