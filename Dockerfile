@@ -2,7 +2,10 @@ FROM python:3.12
 
 LABEL maintainer='Alfred'
 
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN echo "deb http://mirrors.aliyun.com/debian/ bullseye main non-free contrib" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security/ bullseye-security main contrib non-free" >> /etc/apt/sources.list
+
 
 RUN apt-get -y update && \
     apt-get -y install \
@@ -16,8 +19,8 @@ WORKDIR /fastft
 
 COPY . /fastft
 
-RUN /usr/local/bin/python -m pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple/
-RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
+RUN /usr/local/bin/python -m pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/
+RUN pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 
 RUN cp /fastft/config/supervisord.conf /etc/supervisor/supervisord.conf
 RUN cp /fastft/config/gunicorn.conf /etc/supervisor/conf.d/gunicorn.conf
