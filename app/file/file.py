@@ -1,9 +1,9 @@
 import os
 from app.file import router
 from datetime import datetime
-from config.config import conf
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
+from config.config import conf, FASTAPI_ROOT_PATH
 from fastapi import UploadFile, Form, File, Request, Response
 from tool.setting import file_iterator, parse_range_header, encode_filename
 
@@ -14,7 +14,18 @@ DefaultReturn = conf['DefaultReturn']
 
 @router.get('/', summary='文件列表')
 async def file_list(request: Request, page: int = 1, PER_PAGE: int = 10):
-    files = os.listdir('./upload/')  # 获取文件目录
+
+    files = os.listdir(f'{FASTAPI_ROOT_PATH}/upload/')
+
+        # 如果目录为空，返回一个空页面
+    if not files:
+        return templates.TemplateResponse('list.html', {
+            'request': request,
+            'files': [],
+            'current_page': page,
+            'total_pages': 0
+        })
+
     total_files = len(files)  # 总文件数
     files = files[(page - 1) * PER_PAGE: page * PER_PAGE]  # 根据页码获取文件列表
     total_pages = (total_files + PER_PAGE - 1) // PER_PAGE  # 计算总页数
@@ -31,13 +42,13 @@ async def file_list(request: Request, page: int = 1, PER_PAGE: int = 10):
 async def upload_part(file: UploadFile = File(...), chunk: str = Form(None), task_id: str = Form(...), chunked: str = Form(...)):  # 接收前端上传的一个分片
     if chunked == 'false':
         contents = await file.read()
-        with open(f'./upload/{file.filename}', 'wb') as f:
+        with open(f'{FASTAPI_ROOT_PATH}/upload/{file.filename}', 'wb') as f:
             f.write(contents)
 
     if chunked == 'true':
         filename = '%s%s' % (task_id, chunk)  # 构造该分片的唯一标识符
         contents = await file.read()  # 异步读取文件
-        with open(os.path.join('./upload/', filename), "wb") as f:
+        with open(os.path.join(f'{FASTAPI_ROOT_PATH}/upload/', filename), "wb") as f:
             f.write(contents)
 
 
@@ -45,10 +56,10 @@ async def upload_part(file: UploadFile = File(...), chunk: str = Form(None), tas
 @router.get('/success', summary='按序读出分片内容，并写入新文件，系统')
 async def upload_success(task_id: str, filename: str):
     chunk = 0
-    with open('./upload/%s' % filename, 'wb') as target_file:  # 创建新文件
+    with open(f'{FASTAPI_ROOT_PATH}/upload/{filename}', 'wb') as target_file:  # 创建新文件
         while True:
             try:
-                filename = './upload/%s%d' % (task_id, chunk)
+                filename = f'{FASTAPI_ROOT_PATH}/upload/%s%d' % (task_id, chunk)
                 source_file = open(filename, 'rb')  # 按序打开每个分片
                 target_file.write(source_file.read())  # 读取分片内容写入新文件
                 source_file.close()
