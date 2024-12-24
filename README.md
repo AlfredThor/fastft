@@ -36,6 +36,9 @@ docker run -itd -p 8000:8000 -p 9001:9001 fastft
 - 在容器内启动项目
 
 ```shell
+# 進入容器
+docker exec -it fastft /bin/bash
+
 # 启动supervisor
 service supervisor start
 
@@ -46,4 +49,12 @@ supervisorctl start gunicorn
 nginx
 ```
 
+- Supervisor的可視化管理頁面
+
+> 登陸帳號密碼在supervisord.conf文件的下方,可以自行編輯
+
+```shell
+# 替換為你的IP地址即可
+http:/0.0.0.0:/9001
+```
 ---
