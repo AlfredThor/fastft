@@ -30,7 +30,7 @@ docker build -t fastft .
 - 运行容器
 
 ```shell
-docker run -itd -p 8000:8000 -p 9001:9001 fastft
+docker run -itd -p 8080:8080 -p 9001:9001 --name fastft-container fastft
 ```
 
 - 在容器内启动项目
