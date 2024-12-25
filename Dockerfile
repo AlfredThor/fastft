@@ -19,15 +19,9 @@ WORKDIR /fastft
 
 COPY . /fastft
 
-RUN mkdir /upload
-
 RUN /usr/local/bin/python -m pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/
 RUN pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 
 RUN cp /fastft/config/supervisord.conf /etc/supervisor/supervisord.conf
 RUN cp /fastft/config/gunicorn.conf /etc/supervisor/conf.d/gunicorn.conf
 RUN cp /fastft/config/nginx.conf /etc/nginx/nginx.conf
-
-#CMD ["sh", "-c", "[ -e /var/run/supervisor.sock ] && unlink /var/run/supervisor.sock; exec supervisord -n"]
-#CMD ["sh", "-c", "[ supervisorctl start gunicorn"]
-#CMD ["sh", "-c", "[ nignx"]

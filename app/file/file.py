@@ -14,11 +14,15 @@ DefaultReturn = conf['DefaultReturn']
 
 @router.get('/', summary='文件列表')
 async def file_list(request: Request, page: int = 1, PER_PAGE: int = 10):
+    # 检查文件夹是否存在,不存在就创建
+    files_path = f'{FASTAPI_ROOT_PATH}/upload/'
+    if not os.path.exists(files_path):
+        os.makedirs(files_path)
 
-    files = os.listdir(f'{FASTAPI_ROOT_PATH}/upload/')
+    file_list = os.listdir(files_path)
 
-        # 如果目录为空，返回一个空页面
-    if not files:
+    # 如果目录为空，返回一个空页面
+    if not file_list:
         return templates.TemplateResponse('list.html', {
             'request': request,
             'files': [],
@@ -26,8 +30,8 @@ async def file_list(request: Request, page: int = 1, PER_PAGE: int = 10):
             'total_pages': 0
         })
 
-    total_files = len(files)  # 总文件数
-    files = files[(page - 1) * PER_PAGE: page * PER_PAGE]  # 根据页码获取文件列表
+    total_files = len(file_list)  # 总文件数
+    files = file_list[(page - 1) * PER_PAGE: page * PER_PAGE]  # 根据页码获取文件列表
     total_pages = (total_files + PER_PAGE - 1) // PER_PAGE  # 计算总页数
 
     return templates.TemplateResponse('list.html', {
