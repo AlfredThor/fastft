@@ -19,7 +19,7 @@ https://github.com/lsm1103/pyupload
 
 ## 常规方式启动
 
-> 常规方式启动非常的方便,克隆该项目后安装requirements.txt中的包,直接运行main.py即可
+> 常规方式启动非常的方便,克隆该项目后安装requirements.txt中的包,直接运行main.py即可,請確保您的計算機中有Python的環境
 
 ```shell
 # 克隆项目  
@@ -41,7 +41,7 @@ python main.py
 
 > 在项目跟文件目录下操作,确保拥有Python:3.12的镜像
 
-- 克隆倉庫並進入到操作目錄并构建容器
+- 克隆倉庫並進入到操作目錄并构建鏡像
 
 ```shell
 # 克隆项目  
