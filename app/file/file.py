@@ -21,25 +21,22 @@ async def file_list(request: Request, page: int = 1, PER_PAGE: int = 10):
 
     file_list = os.listdir(files_path)
 
+    result = {'request': request}
+
     # 如果目录为空，返回一个空页面
     if not file_list:
-        return templates.TemplateResponse('list.html', {
-            'request': request,
-            'files': [],
-            'current_page': page,
-            'total_pages': 0
-        })
+        result['files'] = []
+        result['current_page'] = page
+        result['total_pages'] = 0
+    else:
+        total_files = len(file_list)  # 总文件数
+        files = file_list[(page - 1) * PER_PAGE: page * PER_PAGE]  # 根据页码获取文件列表
+        total_pages = (total_files + PER_PAGE - 1) // PER_PAGE  # 计算总页数
+        result['files'] = files
+        result['current_page'] = page
+        result['total_pages'] = total_pages
 
-    total_files = len(file_list)  # 总文件数
-    files = file_list[(page - 1) * PER_PAGE: page * PER_PAGE]  # 根据页码获取文件列表
-    total_pages = (total_files + PER_PAGE - 1) // PER_PAGE  # 计算总页数
-
-    return templates.TemplateResponse('list.html', {
-        'request': request,
-        'files': files,
-        'current_page': page,
-        'total_pages': total_pages
-    })
+    return templates.TemplateResponse('list.html', result)
 
 
 @router.post('/upload', summary='接收前端上传的一个分片-通用')
