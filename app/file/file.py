@@ -54,7 +54,7 @@ async def upload_part(file: UploadFile = File(...), chunk: str = Form(None), tas
 
 
 # 三种压缩格式：ZIP、7Z、RAR
-@router.get('/success', summary='按序读出分片内容，并写入新文件，系统')
+@router.get('/success', summary='按序读出分片内容，并写入新文件')
 async def upload_success(task_id: str, filename: str):
     chunk = 0
     with open(f'{FASTAPI_ROOT_PATH}/upload/{filename}', 'wb') as target_file:  # 创建新文件
@@ -73,7 +73,7 @@ async def upload_success(task_id: str, filename: str):
 
 @router.get('/download', summary='下载文件-通用')
 async def file_download(request: Request, filename: str):
-    file_path = os.path.join('./upload/', filename)
+    file_path = os.path.join(f'{FASTAPI_ROOT_PATH}/upload/', filename)
 
     # 检查文件是否存在
     if not os.path.exists(file_path):
