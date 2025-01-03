@@ -13,6 +13,10 @@
     <script src="./static/webuploader/webuploader.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./static/webuploader/webuploader.css">
     <link rel="stylesheet" type="text/css" href="./static/bootstrap/css/bootstrap.min.css">
+    <!-- 引入 layui.css -->
+    <link href="//unpkg.com/layui@2.9.21-rc.3/dist/css/layui.css" rel="stylesheet">
+    <!-- 引入 layui.js -->
+    <script src="//unpkg.com/layui@2.9.21-rc.3/dist/layui.js"></script>
 </head>
 
 <body>
@@ -53,6 +57,7 @@
                 <th style="text-align: center;">ID</th>
                 <th style="text-align: center;">文件名</th>
                 <th style="text-align: center;">点击下载</th>
+                <th style="text-align: center;">点击刪除</th>
             </tr>
         </thead>
         <tbody>
@@ -62,6 +67,9 @@
                     <td style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ file }}</td>
                     <td>
                         <button class="btn btn-success btn-sm" onclick="downloadFile('{{ file }}')">点击进行下载</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFile('{{ file }}')">点击刪除文件</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -87,6 +95,27 @@
 <script type="text/javascript">
     function downloadFile(filename) {
         window.location.href = '/download?filename=' + filename;
+    }
+    async function deleteFile(filename) {
+        try{
+            const response = await fetch('/delete/file?filename=' + filename, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.status === 200) {
+                layer.msg('文件刪除成功!');
+                // 2 秒后刷新页面
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }else{
+                console.log(response.message)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 </script>
 
@@ -128,9 +157,9 @@
             $('.progress-bar').text('上传完成');
 
             // 在上传完成后2秒刷新页面
-            // setTimeout(function() {
-            //     location.reload();  // 刷新页面
-            // }, 1500);
+            setTimeout(function() {
+                location.reload();  // 刷新页面
+            }, 1500);
 
         });
 

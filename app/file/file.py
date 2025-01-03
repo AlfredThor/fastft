@@ -126,3 +126,12 @@ async def file_download(request: Request, filename: str):
         status_code=status_code,
         headers=headers
     )
+
+
+@router.delete('/delete/file', summary='刪除文件')
+async def delete_file(filename: str):
+    file_path = os.path.join(f'{FASTAPI_ROOT_PATH}/upload/', filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return {'code': 200, 'message': f'{filename}文件删除成功!'}
+    return {'code': 400, 'message': '文件不存在!'}
